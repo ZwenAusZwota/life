@@ -4,6 +4,8 @@ from pygame.math import Vector2
 from bacteria01 import Bacteria
 from food import Food
 import random
+from genome import Genome
+import glob, os, jsonpickle
 
 BG_COLOR = (0,0,0)
 FPS = 100
@@ -16,7 +18,7 @@ class App:
         self.size = self.width, self.heigth = 800,800
         self.objects = pygame.sprite.Group()
         self.foods = pygame.sprite.Group()
-        self.MAX_FOOD_TIMER = 1
+        self.MAX_FOOD_TIMER = 0.1
 
     def on_init(self):
         pygame.init()
@@ -28,8 +30,22 @@ class App:
         pygame.display.set_caption('Sim 01')
         self._running = True
         self.food_timer = 0.0
-        for i in range(0,10):
-            self.objects.add( Bacteria(i,(random.randint(0, self.width),random.randint(0, self.heigth)),self._display) )
+        for i in range(0,100):
+            self.objects.add( Food((random.randint(5, self.width-5),random.randint(5, self.heigth-5)),40,self._display))
+        files = False
+        for file in glob.glob("*.json"):
+            files = True
+            with open(file,'r') as f:
+                jTxt = f.readlines()
+                print(jTxt)
+                genome = jsonpickle.decode(jTxt)
+                for i in range(0,10):
+                    #genome = Genome(9,4)
+                    self.objects.add( Bacteria(i,(random.randint(0, self.width),random.randint(0, self.heigth)),self._display,genome) )
+        if files == False:
+            for i in range(0,10):
+                genome = Genome(9,4)
+                self.objects.add( Bacteria(i,(random.randint(0, self.width),random.randint(0, self.heigth)),self._display,genome) )
            # self.foods.add( Food((random.randint(0, self.width),random.randint(0, self.heigth)),100,self._display) )
 
 
@@ -48,9 +64,9 @@ class App:
             self._running = False
 
         self.objects.update(1./FPS, self.objects)
-        self.foods.update()
+        #self.foods.update(1./FPS)
         self.processObjectCollisions()
-        self.processFoodCollisions()
+        #self.processFoodCollisions()
         self.processFood()
         
 
@@ -80,6 +96,14 @@ class App:
     def circle_collision(self, left, right):
         if left != right:
             distance = Vector2(left.rect.center).distance_to(right.rect.center)
+            return distance < ( ( left.radius + right.radius )*1.1 )
+        else:
+            return False
+        
+    def food_collision(self, left, right):
+        if left != right:
+            distance = Vector2(left.rect.center).distance_to(right.rect.center)
+            #print(distance)
             return distance < left.radius
         else:
             return False
@@ -94,14 +118,15 @@ class App:
     def processFoodCollisions(self):
         collided_sprites = pygame.sprite.groupcollide(
             self.objects, self.foods, False, False,
-            collided=self.circle_collision)
+            collided=self.food_collision)
         for collided_sprite in collided_sprites:
             collided_sprite.foundFood(collided_sprites)
 
     def processFood(self):
         self.food_timer += 1./FPS
-        if self.food_timer > 1.0:
-            self.foods.add( Food((random.randint(5, self.width-5),random.randint(5, self.heigth-5)),random.randint(1,100),self._display))
+        if self.food_timer > self.MAX_FOOD_TIMER:
+            #muss zu der Object liste hinzugefügt werden, da nur diese den Bacterias bekannt ist
+            self.objects.add( Food((random.randint(5, self.width-5),random.randint(5, self.heigth-5)),40,self._display))
             self.food_timer = 0.0
 
 if __name__ == "__main__":

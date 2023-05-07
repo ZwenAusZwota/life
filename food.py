@@ -1,15 +1,16 @@
 import pygame
-
+from helper import SimConstants
 
 
 class Food(pygame.sprite.Sprite):
     def __init__(self, position, energy, surface):
         super(Food, self).__init__()
-        self.type = "FOOD"
+        self.type = SimConstants.OTypeFood
         self.radius = 2
         self.color = (0,255,0)
         self.position = list(position) or [0, 0]
         self.energy = energy
+        self.age = 0
         
         self.display = surface
         #self.image = pygame.image.load(image_path)
@@ -22,15 +23,17 @@ class Food(pygame.sprite.Sprite):
         pygame.draw.rect(self.image, self.color, pygame.Rect(0,0,self.radius*2,self.radius*2))
 
     
-    #def update(self, dt, objects):
-    def update(self):
+    def update(self, dt, objects):
+    #def update(self):
         super(Food, self).update()
         self.rect.center = self.position
-        if self.energy <= 0:
+        self.age += 1*dt
+        if self.energy <= 0 or self.age > 100:
             self.kill()
             
-    def decEnergy(self, energy):
-        self.energy -= energy
+    def decEnergy(self):
+        self.energy = 0
+        self.kill()
 
     def collision(self,sprites):
         keys = list(sprites.keys())

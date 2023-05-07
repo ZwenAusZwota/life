@@ -1,0 +1,69 @@
+das scheint eine einfache Implemeniterung zu sein
+https://github.com/Atharv24/NEAT/tree/master/Assets/Scripts
+
+
+Genome
+- Knotenliste
+- Verbindungsliste
+- leeres Genome aus #Input und #Output erzeugen
+- Knoten hinzufügen
+- Verbindung hinzufügen
+- Mutieren (Verbdinungsgewichte)
+- KnotenMutation (neuer Knoten in Bestehende VErbidnung)
+- Verbindungsmutation (neue VErbindung)
+
+NodeGene
+- id
+- typ
+
+Connection
+- fromNode
+- toNode
+- weight
+- enabled
+- innovation ??
+
+GenomeUtilites - Funktionen zum Bewerten des Genomes 
+- Distance
+- Disjoint
+- Excess
+- AverageWeightDifference
+- CrossOver
+
+Network
+- Genome
+- nodesGenes (kommen aus dem Genome)
+- connections (Kommen aus dem Genome)
+- nodes (das ist was neues)
+- inputNodes
+- outputNodes
+- fitnes
+- init(Genome)
+- makeNetwork erzeugt das Netzwerk aus dem Genome
+- getOutput - erzeugt aus dem Input einen Output
+- setFitness
+- AddFitness
+- compareFitness - brauche ich das? Fitness zegt sich durch langes leben und viele nachkommen
+
+Node
+- id
+- value
+- eingangsConnections
+- ausgangsConnections
+- ready - status der Verbindungen ermitteln
+- AddInConnection
+- AddOutConnection
+- CalulateValue (TanH(Summe(EingangsVerbindungen)))
+- TransmitValue - value in die AusgangsVerbindungen schreiben
+
+Connection
+- fromNode
+- toNode
+- value
+- weigth
+- ready
+- constructor aus in,out,weight oder GeneConnection
+-
+
+Manager
+-
